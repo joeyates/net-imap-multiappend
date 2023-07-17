@@ -26,8 +26,8 @@ RSpec.describe Net::IMAP do
     let(:body2) { "body2" }
     let(:literal1) { instance_double(Net::IMAP::Literal, "literal1") }
     let(:literal2) { instance_double(Net::IMAP::Literal, "literal2") }
-    let(:message1) { [body1] }
-    let(:message2) { [body2] }
+    let(:message1) { Net::IMAP::Multiappend::Message.new(body1) }
+    let(:message2) { Net::IMAP::Multiappend::Message.new(body2) }
 
     before do
       allow(subject).to receive(:send_command)
@@ -37,7 +37,7 @@ RSpec.describe Net::IMAP do
     end
 
     it "sends multiple messages" do
-      subject.multiappend(mailbox, message1 + message2)
+      subject.multiappend(mailbox, [message1, message2])
 
       expected = [literal1, literal2]
       expect(subject).
