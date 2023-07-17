@@ -1,8 +1,6 @@
 # Net::IMAP::Multiappend
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/net/imap/multiappend`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Adds IMAP MULTIAPPEND to the net-imap gem.
 
 ## Installation
 
@@ -14,19 +12,76 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
     $ gem install net-imap-multiappend
 
-## Usage
+## Example Usage
 
-TODO: Write usage instructions here
+Use Podman to run a test IMAP server
+
+```sh
+podman run --detach --env=MAILNAME=example.com --env=MAIL_ADDRESS=address@example.com --env=MAIL_PASS=pass -p 7993:993 antespi/docker-imap-devel:latest
+```
+
+...or use Docker
+
+```sh
+docker run --detach --env=MAILNAME=example.com --env=MAIL_ADDRESS=address@example.com --env=MAIL_PASS=pass -p 7993:993 antespi/docker-imap-devel:latest
+```
+
+In the root directory of this project, install dependencies
+
+```sh
+bundle
+```
+
+Run a Ruby shell
+
+```sh
+pry
+```
+
+Connect
+
+```ruby
+> require "net/imap/multiappend"
+
+> imap = Net::IMAP.new("localhost", {port: 7993, ssl: {verify_mode:0}})
+> imap.login("address@example.com", "pass")
+```
+
+Check the server accepts MULTIAPPEND
+
+```ruby
+> imap.can_multiappend?
+```
+
+Send two messages
+
+```ruby
+> m1 = Net::IMAP::Multiappend::Message.new("From: me\r\n\r\nHi 1\r\n")
+> m2 = Net::IMAP::Multiappend::Message.new("From: me\r\n\r\nHi 2\r\n", flags: [:Seen])
+> imap.multiappend("INBOX", [m1, m2])
+```
+
+Check they're there
+
+```ruby
+> imap.examine("INBOX")
+> uids = imap.uid_search(["ALL"])
+> imap.uid_fetch(uids.last(2), ["BODY[]", "FLAGS"])
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `rake spec` to run the tests.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`.
+To release a new version, update the version number in `version.rb`,
+and then run `bundle exec rake release`, which will create a git tag for the version,
+push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/joeyates/net-imap-multiappend. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/joeyates/net-imap-multiappend/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/joeyates/net-imap-multiappend.
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/joeyates/net-imap-multiappend/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
