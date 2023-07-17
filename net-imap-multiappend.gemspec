@@ -16,12 +16,17 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = "https://github.com/joeyates/net-imap-multiappend/blob/main/CHANGELOG.md"
+  spec.metadata["rubygems_mfa_required"] = "true"
 
-  spec.files = Dir.chdir(__dir__) do
-    `git ls-files -z`.split("\x0").reject do |f|
-      (f == __FILE__) || f.match(%r{\A(?:(?:bin|test|spec|features)/|\.(?:git|travis|circleci)|appveyor)})
-    end
-  end
+  spec.files = Dir.glob("lib/**/*.rb")
+  spec.files += %w[
+    CHANGELOG.md
+    CODE_OF_CONDUCT.md
+    Gemfile
+    LICENSE.txt
+    net-imap-multiappend.gemspec
+    README.md
+  ]
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "net-imap", ">= 0.3.2"
