@@ -52,6 +52,47 @@ RSpec.describe Net::IMAP do
         end.to raise_error(TypeError)
       end
     end
+
+    context "when flags are included" do
+      let(:message1) { Net::IMAP::Multiappend::Message.new(body1, flags: [:Seen]) }
+
+      it "they are added before the body" do
+        subject.multiappend(mailbox, [message1, message2])
+
+        expected = [[:Seen], literal1, literal2]
+        expect(subject).
+          to have_received(:send_command).
+          with("APPEND", mailbox, *expected)
+      end
+    end
+
+    context "when a date is included" do
+      let(:message2) { Net::IMAP::Multiappend::Message.new(body2, date_time: now) }
+      let(:now) { Time.now }
+
+      it "it is added before the body" do
+        subject.multiappend(mailbox, [message1, message2])
+
+        expected = [literal1, now, literal2]
+        expect(subject).
+          to have_received(:send_command).
+          with("APPEND", mailbox, *expected)
+      end
+    end
+
+    context "when both flags and a date are included" do
+      let(:message1) { Net::IMAP::Multiappend::Message.new(body1, flags: [:Seen], date_time: now) }
+      let(:now) { Time.now }
+
+      it "the flags, then the date are added before the body" do
+        subject.multiappend(mailbox, [message1, message2])
+
+        expected = [[:Seen], now, literal1, literal2]
+        expect(subject).
+          to have_received(:send_command).
+          with("APPEND", mailbox, *expected)
+      end
+    end
   end
 
   describe "#can_multiappend?" do
