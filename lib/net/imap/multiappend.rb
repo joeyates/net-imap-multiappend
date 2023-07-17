@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Net
-  module Imap
+  module IMAP
     module Multiappend
       class Error < StandardError; end
     end

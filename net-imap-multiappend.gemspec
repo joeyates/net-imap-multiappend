@@ -4,7 +4,7 @@ require_relative "lib/net/imap/multiappend/version"
 
 Gem::Specification.new do |spec|
   spec.name = "net-imap-multiappend"
-  spec.version = Net::Imap::Multiappend::VERSION
+  spec.version = Net::IMAP::Multiappend::VERSION
   spec.authors = ["Joe Yates"]
   spec.email = ["joe.g.yates@gmail.com"]
 
