@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Net
-  class IMAP
-    module Multiappend
-      VERSION = "0.1.0"
-    end
+require "net/imap"
+
+class Net::IMAP
+  module Multiappend
+    VERSION = "0.1.0"
   end
 end
